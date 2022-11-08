@@ -2,15 +2,15 @@
 
 ## Into
 
-Elcetronic mail messanger where users can exchange massages with each other.
+Elcetronic mail system where users can exchange massages with each other.
 
 ## Files
 
-project/signin.html
-project/signup.html
-project/mail-api.php
-project/style/main.css
-diagram.pdf
+project/signin.html<br/>
+project/signup.html<br/>
+project/mail-api.php<br/>
+project/style/main.css<br/>
+diagram.pdf<br/>
 README.md
 
 ## API Actions
@@ -25,16 +25,16 @@ README.md
 
 ## Data 
 
-Users - ID Int PK,first name text, last nametext , password text.
-Emails - Id PK, sender id Int FK, recipient id Int FK, message text, sent time datetime, read bool.
-Trash - Id int PK, user id FK, email id FK.
+Users - ID Int PK,first name text, last nametext , password text.<br/>
+Emails - Id PK, sender id Int FK, recipient id Int FK, message text, sent time datetime, read bool.<br/>
+Trash - Id int PK, user id FK, email id FK.<br/>
 
 ## Features
 
-Send emails.(To Do)
-Recieve emails.(To Do)
-Delete emails.(To Do)
-Star emails.(To Do)
+Send emails.(To Do)<br/>
+Recieve emails.(To Do)<br/>
+Delete emails.(To Do)<br/>
+Star emails.(To Do)<br/>
 
 
 Visit https://digdug.cs.endicott.edu/~mohana/csc302fa22-ohana-project/project/signin.html
