@@ -19,9 +19,9 @@ README.md
 | ------------- | ------------- | ---------- |   -------------------- | 
 | sign-up       |               |name, email address, password |   sucsess (true/false) |
 | Sign-in       |               |  email address, password |   sucsess (true/false) |
-| send-email    | POST          | recipient address, message |   sucsess (true/false) |
-| delete-mail   | DELETE        | email id        |   sucsess (true/false)  |
-| star-email    | PATCH         |  email id         |   sucsess (true/false) |
+| send-email    | POST          | sender id,recipient address, message |   sucsess (true/false) |
+| delete-mail   | DELETE        | email id, user id      |   sucsess (true/false)  |
+| star-email    | PATCH         |  email id, user id       |   sucsess (true/false) |
 
 ## Data 
 
