@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/main.css">
+    <title>Simple API demo</title>
+    <style>
+ 
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- 
+    <script>
+        $(document).ready(function(){
+
+            var $inputBox = $('#input');
+            var $outputBox = $('#output');
+
+            $(document).on('click', '#run', function(event){
+
+                $.ajax({
+                    url: 'quizzer-api.php',
+                    data: JSON.parse($inputBox.val()),
+                    method: 'post',
+                    success: function(data){
+                        console.log(data);
+                        // Pretty print the data.
+                        $outputBox.html(JSON.stringify(data, null, 2));
+                        $outputBox.addClass('highlight');
+
+                        if(!data.success){
+                            $outputBox.addClass('error');
+                        }
+                    },
+                    error: function(jqXHR, status, error){
+                        $outputBox.html(error);
+                        $outputBox.addClass('highlight').addClass('error');
+                    }, 
+
+                });
+
+                // Remove highlighting during request.
+                $('.highlight').removeClass('highlight').removeClass('error');
+            });
+        });
+    </script> -->
+
+</head>
+<body>
+
+    <header class="header">
+        Email
+    </header>
+
+<div class="sidenav">
+<ul>
+    <a href="inbox">Inbox</a>
+    <a href="sent">Sent</a>
+    <a href="starred">Starred</a> 
+    <a href="singout">sign out</a>
+</ul>
+</div>
+<div class="content">
+    <dl>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+        <dt>Test</dt>
+    </dl>
+
+</div>
+</body>
+</html>
