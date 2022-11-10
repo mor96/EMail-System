@@ -72,10 +72,13 @@
   
   /* Style the content */
   .content {
+    height: 100%;
     margin-left: 190px;
     padding-left: 20px;
     background-color: aqua;
     height: 100%;
+    margin-top: 0px;
+    top: 0;
   }
 
   .content dl{
