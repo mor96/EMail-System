@@ -11,7 +11,7 @@ signup.html - HTML page where the user signup.
 index.html - User home page after he sign in.   
 mail-api.php - File that handle all php code.   
 mail-JS.js File that handle all javascript code.   
-mail.db - database file that keep store all the users and mails.      
+mail.db - database file that store all the users and mails.      
 
 ## API Actions
 
@@ -26,7 +26,7 @@ mail.db - database file that keep store all the users and mails.
 
 ## Data 
 
-###### Database
+###### Database - Sqlite
 Users - userId Int PK,fname text, lname text , password text.  
 Emails - messageId PK, senderId Int FK, receiverId Int FK, message text, sent time datetime, starred int.  
 
