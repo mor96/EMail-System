@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/main.css">
+    <title>Simple API demo</title>
+    <style>
+ 
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        //This code taken from class example and been modifeid 
+        $(document).ready(function(){
+            $(document).on('submit', '#signin-form', function(event){
+                var data = $(this).serialize();
+                var serverData = {'fname': data['fname'],
+                        'lname': data['lname'],
+                        'mailaddr': data['mailaddr'],
+                        'password': data['password'],
+                    };
+
+                // if(data['password'] !== data['password2']){
+                //     // Do something about it.
+                // }
+
+                // $.ajax('/users', {
+                //     method: 'POST',
+                //     data: data,
+
+                // })
+                $.ajax({
+                    url: 'mail-api.php',
+                    data: data,
+                    method: 'post',
+                    success: function(data){
+                        console.log("hello");
+                        if(data["success"] === true){
+                            window.location.assign("index.html")
+                            localStorage.setItem('username', data['username']);
+                           //window.location.href = 'index.html';
+                        }
+                       
+                        // Pretty print the data.
+                    },
+                    error: function(jqXHR, status, error){
+                        console.log(data);
+                    }, 
+
+                });
+                event.preventDefault();
+               
+                
+            });
+
+        });
+    </script>
+
+</head>
+<body>
+
+    <header class="header">
+        Welcome to TMAIL
+    </header>
+
+<div class="wrapper">
+    <div class="signin">
+        <form id="signin-form"> 
+        <input type="hidden" name="action" value="signin"> 
+        Email Address: <input type="text" name="username"><i style="padding-left: 5px">@tmail.com</i><br><br>
+        Password:  <input type="text" name="password"><br><br>
+        No account? <a href="signup.html">Create One!</a><br><br>
+        <input type="submit" value="Sign In">
+      </form>
+    </div>
+</div>
+
+<div class="content">
+</div>
+</body>
+</html>
