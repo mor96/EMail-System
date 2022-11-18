@@ -6,12 +6,12 @@ Elcetronic mail messanger where users can exchange massages with each other.
 
 ## Files
 
-signin.html - HTML page where the user sign in
-signup.html - HTML page where the user signup
-index.html - User home page after he sign in
-mail-api.php - File that handle all php code
-mail-JS.js File that handle all javascript code
-mail.db - database file that keep store all the users and mails
+signin.html - HTML page where the user sign in. 
+signup.html - HTML page where the user signup. 
+index.html - User home page after he sign in. 
+mail-api.php - File that handle all php code. 
+mail-JS.js File that handle all javascript code. 
+mail.db - database file that keep store all the users and mails.  
 
 ## API Actions
 
@@ -27,32 +27,32 @@ mail.db - database file that keep store all the users and mails
 ## Data 
 
 ###### Database
-Users - userId Int PK,fname text, lname text , password text.
-Emails - messageId PK, senderId Int FK, receiverId Int FK, message text, sent time datetime, starred int.
+Users - userId Int PK,fname text, lname text , password text.  
+Emails - messageId PK, senderId Int FK, receiverId Int FK, message text, sent time datetime, starred int.  
 
 
  ###### Client Side
-User username stored in Local storage 
+User username stored in Local storage   
 
 ###### Server Side
-User username, id, and signin status(true/false) sessions stored at server side.
+User username, id, and signin status(true/false) sessions stored at server side.  
 
 ## Features
 
-Sign up - 100%
-Sign in - 100%
-Sign out - 0%
-Send emails - 100%
-Recieve emails - 100%
-Delete emails - 50% (Emails get deleted for both sender and receiver - need to fix)
-Star emails - 100%
+Sign up - 100%.   
+Sign in - 100%.   
+Sign out - 0%.        
+Send emails - 100%.  
+Recieve emails - 100%.  
+Delete emails - 50% (Emails get deleted for both sender and receiver - need to fix).  
+Star emails - 100%.  
 
 ## To Do
-Handle errors
-Style
-Add title to message
-Inbox will show the message title and open the full message after user press
-See the name of the message author insted of his ID
+Handle errors.  
+Style.  
+Add title to message.  
+Inbox will show the message title and open the full message after user press.  
+See the name of the message author insted of his ID.  
 
 
-Visit https://digdug.cs.endicott.edu/~mohana/csc302fa22-ohana-project/project/signin.html
+Visit https://digdug.cs.endicott.edu/~mohana/csc302fa22-ohana-project/src/signin.html
