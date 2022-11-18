@@ -6,12 +6,12 @@ Elcetronic mail messanger where users can exchange massages with each other.
 
 ## Files
 
-signin.html - HTML page where the user sign in. 
-signup.html - HTML page where the user signup. 
-index.html - User home page after he sign in. 
-mail-api.php - File that handle all php code. 
-mail-JS.js File that handle all javascript code. 
-mail.db - database file that keep store all the users and mails.  
+signin.html - HTML page where the user sign in.   
+signup.html - HTML page where the user signup.   
+index.html - User home page after he sign in.   
+mail-api.php - File that handle all php code.   
+mail-JS.js File that handle all javascript code.   
+mail.db - database file that keep store all the users and mails.      
 
 ## API Actions
 
