@@ -26,7 +26,7 @@ mail.db - database file that store all the users and mails.
 
 ## Data 
 
-###### Database - Sqlite
+###### Database Sqlite
 Users - userId Int PK,fname text, lname text , password text.  
 Emails - messageId PK, senderId Int FK, receiverId Int FK, message text, sent time datetime, starred int.  
 
