@@ -12,7 +12,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
-        //This code taken from class example and been modifeid 
         $(document).ready(function(){
             $(document).on('submit', '#signin-form', function(event){
                 var data = $(this).serialize();
@@ -38,7 +37,7 @@
                     success: function(data){
                         console.log("hello");
                         if(data["success"] === true){
-                            window.location.assign("index.html")
+                            window.location.assign("index.html#inbox")
                             localStorage.setItem('username', data['username']);
                            //window.location.href = 'index.html';
                         }
@@ -46,7 +45,8 @@
                         // Pretty print the data.
                     },
                     error: function(jqXHR, status, error){
-                        console.log(data);
+                        alert("Email address or password are incorrect, please try again","dd");
+                        console.log("Le niten leka");
                     }, 
 
                 });
@@ -65,15 +65,19 @@
         Welcome to TMAIL
     </header>
 
-<div class="wrapper">
-    <div class="signin">
+    <div class="wrapper">
+        <div class="signin-title">
+            TMAIL
+        </div>
         <form id="signin-form"> 
-        <input type="hidden" name="action" value="signin"> 
-        Email Address: <input type="text" name="username"><i style="padding-left: 5px">@tmail.com</i><br><br>
-        Password:  <input type="text" name="password"><br><br>
-        No account? <a href="signup.html">Create One!</a><br><br>
-        <input type="submit" value="Sign In">
-      </form>
+            <input type="hidden" name="action" value="signin"> 
+            <span class="far fa-user"></span>
+            Email Address: <input type="text" name="username"><i style="padding-left: 5px">@tmail.com</i><br><br>
+            <span class="fas fa-key"></span>
+            Password:  <input type="password" name="password"><br><br>
+            No account? <a href="signup.html">Create One!</a><br><br>
+            <input type="submit" value="Sign In">
+          </form>
     </div>
 </div>
 

@@ -1,7 +1,5 @@
-
 <?php
-// This code is based on the code from class examples in CSC302,
-// but has been modified to conform to this project.
+//This code taken from class example
 header('Content-type: application/json');
 
 // For debugging:
@@ -35,7 +33,7 @@ $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 createTables();
 
 $supportedActions = [
-    'signup', 'signin', 'getTable', 'sendEmail','getEmails', 'starEmail','dumpEmail'
+    'signup', 'signin', 'getTable', 'sendEmail','getEmails', 'starEmail','dumpEmail', 'signout'
 ];
 
 //This code taken from class example and been modifeid 
@@ -44,18 +42,6 @@ if(array_key_exists('action', $_POST)){
     $action = $_POST['action'];
     if(array_search($_POST['action'], $supportedActions) !== false){
         $_POST['action']($_POST);
-    } else {
-        die(json_encode([
-            'success' => false, 
-            'error' => 'Invalid action: '. $action
-        ]));
-    }
-}
-
-if(array_key_exists('action', $_GET)){
-    $action = $_GET['action'];
-    if(array_search($_GET['action'], $supportedActions) !== false){
-        $_GET['action']($_GET);
     } else {
         die(json_encode([
             'success' => false, 
@@ -78,11 +64,12 @@ function createTables(){
             'password text, '. 
             'createdAt datetime default(datetime()))');
 
-        // Create the mails table.
+        // Create the Quizzes table.
         $dbh->exec('create table if not exists mails('. 
             'messageId integer primary key autoincrement, '. 
             'senderId integer, '. 
             'receiverId integer, '. 
+            'subject text, '. 
             'message text, '. 
             'starred integer, '. 
             'sentAt datetime default(datetime()), '. 
@@ -98,7 +85,6 @@ function createTables(){
     }
 }
 
-
 function error($message, $responseCode=400){
     http_response_code($responseCode);
     die(json_encode([
@@ -106,8 +92,6 @@ function error($message, $responseCode=400){
         'error' => $message
     ]));
 }
-
-
 
 function authenticate($username, $password){
     global $dbh;
@@ -130,15 +114,17 @@ function authenticate($username, $password){
         if(password_verify($password, $passwordHash)){
             return true;
         }
+        
         error('Could not authenticate username and password.', 401);
+        
         
 
     } catch(Exception $e){
+        
         error('Could not authenticate username and password: '. $e);
+       
     }
 }
-
-
 
 /**
  * Checks if the user is signed in; if not, emits a 403 error.
@@ -146,6 +132,33 @@ function authenticate($username, $password){
 function mustBeSignedIn(){
     if(!(key_exists('signedin', $_SESSION) && $_SESSION['signedin'])){
         error("You must be signed in to perform that action.", 403);
+    }
+}
+
+function authorize($data){
+    global $dbh;
+    
+    try {
+        $statement = $dbh->prepare('select authorId from Quizzes '. 
+        'where id = :quizId');
+        $statement->execute([
+            ':quizId' => $data['quizId']
+        ]);
+
+
+        // $statement = $dbh->prepare('select authorId from Quizzes '. 
+        // 'where id = :quizId');
+        // $statement->execute([
+        //     ':quizId' => $data['quizId']
+        // ]);
+        $user = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($user['authorId'] ==  $_SESSION['user-id']){
+            return true;
+        }
+        error('You are not authorize to do this.', 403);
+    } catch(Exception $e){
+        error('You are not authorize to do this '. $e);
     }
 }
 
@@ -172,8 +185,6 @@ function signin($data){
         error('Username or password not found.', 401);
     }
 }
-
-
 
 /**
  * Logs the user out if they are logged in.
@@ -248,10 +259,11 @@ function sendEmail($data){
 
 
         $statement = $dbh->prepare('insert into mails'. 
-            '(senderId, receiverId, message) values (:senderId, :receiverId, :message)');
+            '(senderId, receiverId, subject, message) values (:senderId, :receiverId, :subject, :message)');
         $statement->execute([
             ':senderId' => $_SESSION['user-id'], 
             ':receiverId' => $user['userId'],
+            ':subject' => $data['subject'],
             ':message' => $data['message']
         ]);
 
@@ -269,6 +281,270 @@ function sendEmail($data){
 }
 
 
+/**
+ * Adds a quiz to the database. Requires the parameters:
+ *  - authorUsername
+ *  - name (of quiz) 
+ *
+ * @param data An JSON object with these fields:
+ *               - success -- whether everything was successful or not
+ *               - id -- the id of the quiz just added (only if success is true)
+ *               - error -- the error encountered, if any (only if success is false)
+ */
+function addQuiz($data){
+    global $dbh;
+
+    // authenticate($data['username'], $data['password']);
+    mustBeSignedIn();
+
+    // Look up userid first.
+    #$user = getUserByUsername($data['username']);
+    
+    try {
+        $statement = $dbh->prepare('insert into Quizzes'. 
+            '(authorId, name) values (:authorId, :name)');
+        $statement->execute([
+            ':authorId' => $_SESSION['user-id'], 
+            ':name' => $data['name']
+        ]);
+
+        die(json_encode([
+            'success' => true,
+            'id' => $dbh->lastInsertId()
+        ]));
+
+    } catch(PDOException $e){
+        http_response_code(400);
+        die(json_encode([
+            'success' => false, 
+            'error' => "There was an error adding the quiz: $e"
+        ]));
+    }
+}
+
+/**
+ * Adds a quiz item to the database. Requires the parameters:
+ *  - quizId
+ *  - question
+ *  - answer
+ * 
+ * @param data An JSON object with these fields:
+ *               - success -- whether everything was successful or not
+ *               - id -- the id of the quiz item just added (only if success is true)
+ *               - error -- the error encountered, if any (only if success is false)
+ */
+function addQuizItem($data){
+    global $dbh;
+
+    // authenticate($data['username'], $data['password']);
+    mustBeSignedIn();
+    authorize($data);
+
+    try {
+        $statement = $dbh->prepare('insert into QuizItems'. 
+            '(quizId, question, answer) values (:quizId, :question, :answer)');
+        $statement->execute([
+            ':quizId' => $data['quizId'], 
+            ':question' => $data['question'],
+            ':answer' => $data['answer']
+        ]);
+
+        die(json_encode([
+            'success' => true,
+            'id' => $dbh->lastInsertId()
+        ]));
+
+    } catch(PDOException $e){
+        http_response_code(400);
+        die(json_encode([
+            'success' => false, 
+            'error' => "There was an error adding the quiz item: $e"
+        ]));
+    }
+}
+
+
+
+/**
+ * Removes a quiz item from the database. Requires the parameters:
+ *  - quizItemId
+ * 
+ * @param data An JSON object with these fields:
+ *               - success -- whether everything was successful or not
+ *               - error -- the error encountered, if any (only if success is false)
+ */
+function removeQuizItem($data){
+    global $dbh;
+
+    // authenticate($data['username'], $data['password']);
+    mustBeSignedIn();
+    authorize($data);
+
+    try {
+        $statement = $dbh->prepare('delete from QuizItems '. 
+            'where id = :id');
+        $statement->execute([
+            ':id' => $data['quiItemId']]);
+
+        die(json_encode(['success' => true]));
+
+    } catch(PDOException $e){
+        http_response_code(400);
+        die(json_encode([
+            'success' => false, 
+            'error' => "There was an error removing the quiz item: $e"
+        ]));
+    }
+}
+
+/**
+ * Updates a quiz item in the database. Requires the parameters:
+ *  - quizItemId
+ *  - question
+ *  - answer
+ * 
+ * @param data An JSON object with these fields:
+ *               - success -- whether everything was successful or not
+ *               - error -- the error encountered, if any (only if success is false)
+ */
+function updateQuizItem($data){
+    global $dbh;
+
+    // authenticate($data['username'], $data['password']);
+    mustBeSignedIn();
+    authorize($data);
+
+    try {
+        $statement = $dbh->prepare('update QuizItems set '. 
+            'question = :question, '.
+            'answer = :answer, '.
+            'updatedAt = datetime() '.
+            'where id = :id');
+        $statement->execute([
+            ':question' => $data['question'],
+            ':answer' => $data['answer'],
+            ':id' => $data['quizItemId']
+        ]);
+
+        die(json_encode(['success' => true]));
+
+    } catch(PDOException $e){
+        http_response_code(400);
+        die(json_encode([
+            'success' => false, 
+            'error' => "There was an error updating the quiz item: $e"
+        ]));
+    }
+}
+
+/**
+ * Updates a quiz item in the database. Requires the parameters:
+ *  - submitterUsername
+ *  - quizId
+ *  - responses:
+ *    * quizItemId
+ *    * response
+ * 
+ * @param data An JSON object with these fields:
+ *               - success -- whether everything was successful or not
+ *               - error -- the error encountered, if any (only if success is false)
+ */
+function submitResponses($data){
+    global $dbh;
+
+    // authenticate($data['username'], $data['password']);
+    mustBeSignedIn();
+
+    //$user = getUserByUsername($data['submitterUsername']);
+
+    try {
+        // Strategy: 
+        // 1. grab all of the item that go with this quiz
+        // 2. grade the responses
+        // 3. create a new submission entry
+        // 4. create a new entry for each response
+
+
+        // 1. Grab all of the item that go with this quiz
+        $statement = $dbh->prepare('select id, answer from QuizItems '. 
+            'where quizId = :quizId');
+        $statement->execute([
+            ':quizId' => $data['quizId']
+        ]);
+        $quizItems = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        // Put them into a nicer lookup.
+        $quizItemAnswerLookup = [];
+        foreach($quizItems as $quizItem){
+            $quizItemAnswerLookup[$quizItem['id']] = $quizItem['answer'];
+        }
+
+        // 2. Grade the responses. 
+        $responses = [];
+        $numCorrect = 0;
+        foreach($data['responses'] as $response){
+            $isCorrect = false;
+            if($quizItemAnswerLookup[$response['quizItemId']] == $response['response']){
+                $isCorrect = true;
+                $numCorrect += 1;
+            }
+
+            array_push($responses, [
+                'quizItemId' => $response['quizItemId'],
+                'response' => $response['response'],
+                'isCorrect' => $isCorrect
+            ]);
+        }
+
+        // 3. Create a new submission entry.
+        $statement = $dbh->prepare('insert into Submissions('. 
+            'quizId, submitterId, numCorrect, score) values ('. 
+            ':quizId, :submitterId, :numCorrect, :score)');
+        $statement->execute([
+            ':quizId' => $data['quizId'],
+            ':submitterId' => $_SESSION['user-id'],
+            ':numCorrect' => $numCorrect,
+            ':score' => ($numCorrect/count($responses))
+        ]);
+
+        $submissionId = $dbh->lastInsertId();
+        
+        // 4. Create a new entry for each response.
+        $statementText = 'insert into QuizItemResponses('. 
+            'quizItemId, submissionId, response, isCorrect) values ';
+        $statementData = [];
+
+        for($i = 0; $i < count($responses); $i++){
+            $statementText .= "(?, ?, ?, ?)";
+            if($i < count($responses)-1){
+                $statementText .= ', ';
+            }
+            array_push($statementData, 
+                $responses[$i]['quizItemId'],
+                $submissionId,
+                $responses[$i]['response'],
+                $responses[$i]['isCorrect']
+            
+            );
+        }
+
+        $statement = $dbh->prepare($statementText);
+        $statement->execute($statementData);
+        
+
+        die(json_encode([
+            'success' => true,
+            'id' => $submissionId
+        ]));
+
+    } catch(PDOException $e){
+        http_response_code(400);
+        die(json_encode([
+            'success' => false, 
+            'error' => "There was an error submitting the responses: $e"
+        ]));
+    }
+}
 
 /**
  * Outputs the row of the given table that matches the given id.
@@ -292,8 +568,6 @@ function getTableRow($table, $data){
     }
 }
 
-
-
 /**
  * Looks up a user by their username. 
  * 
@@ -314,9 +588,6 @@ function getUserByUsername($username){
         return null;
     }
 }
-
-
-
 
 /**
  * Outputs all the values of a database table. 
@@ -340,7 +611,6 @@ function getTable($table){
     }
 }
 
-
 function getEmails($data){
     global $dbh;
     $method = $data['method']; 
@@ -351,14 +621,20 @@ function getEmails($data){
             $method = 'receiverId';
             $statement = $dbh->prepare("select * from mails where $method = :user and starred = 1");
             $statement->execute([':user' =>  $_SESSION['user-id']]);
-            $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $emails = $statement->fetchAll(PDO::FETCH_ASSOC);
         }
         else {
             $statement = $dbh->prepare("select * from mails where $method = :user");
             $statement->execute([':user' =>  $_SESSION['user-id']]);
-            $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+            $emails = $statement->fetchAll(PDO::FETCH_ASSOC);
         }
-        die(json_encode(['success' => true, 'data' => $rows]));
+
+
+        $statement = $dbh->prepare("select * from Users");
+            $statement->execute();
+            $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+        die(json_encode(['success' => true, 'data' => $emails, 'user' => $users ]));
 
     } catch(PDOException $e){
         http_response_code(400);
@@ -368,8 +644,6 @@ function getEmails($data){
         ]));
     }
 }
-
-
 
 function getEmailsTest($data){
     global $dbh;
@@ -399,8 +673,6 @@ function getEmailsTest($data){
     }
 }
 
-
-
 function starEmail($data){
     global $dbh;
     $id = $data['emailId']; 
@@ -427,8 +699,6 @@ function starEmail($data){
         ]));
     }
 }
-
-
 
 function dumpEmail($data){
     global $dbh;

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Simple API demo</title>
     <style>
  
@@ -13,8 +16,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="mail-JS.js"></script>
 
-    <!-- This code taken from class example and been modifeid  -->
     <script>
+
         $(document).ready(function(){
             $(document).on('submit', '#send-email-form', function(event){
                 var data = $(this).serialize();
@@ -40,6 +43,10 @@
                     success: function(data){
                         console.log(data["success"]);
                         if(data["success"] === true){
+                            alert("EMAIL SENT SUCCESFULY!");
+                            document.getElementById('address').value = '';
+                            document.getElementById('subject').value = '';
+                            document.getElementById('message').value = '';
                             // window.location.assign("index.html")
                             // localStorage.setItem('username', data['username']);
                            //window.location.href = 'index.html';
@@ -49,6 +56,7 @@
                     },
                     error: function(jqXHR, status, error){
                         console.log(data);
+                        
                     }, 
 
                 });
@@ -72,14 +80,22 @@
    
     <div class="sidenav">
     
-        <p style="color: white;">Welcome, <span class="username"></span> !</p>
-        
-    <ul>
+        <p style="color: rgb(17, 8, 5); padding-left: 10px;">Welcome, <span class="username"></span> !</p>
+   
+        <nav id="sidenav" ><br>
+            <div class="w3-bar-block">
+              <a  href="#inbox">INBOX</a> 
+              <a href="#sent" >SENT</a> 
+              <a href="#starred">STARRED</a>
+              <button id="signout">sign out</button>
+            </div>
+          </nav>
+    <!-- <ul>
         <a href="#inbox">Inbox</a>
         <a href="#sent">Sent</a>
         <a href="#starred">Starred</a> 
         <button id="signout">sign out</button>
-    </ul>
+    </ul> -->
     </div>
     <div class="content">
         <dl id="mailbox">
@@ -91,8 +107,9 @@
 
             <form id="send-email-form"> 
                 <input type="hidden" name="action" value="sendEmail">
-               Address: <input type="text" name="username">@Tmail.com<br><br>  
-               <textarea type="text"  name="message" rows="9" cols="100"></textarea>
+               To: <input id="address" type="text" name="username">@Tmail.com<br><br> 
+               Subject: <input id="subject" type="text" name="subject"><br><br>  
+               <textarea id="message" type="text"  name="message" rows="9" cols="100"></textarea>
                 <br><br>
                 <input type="submit" value="SEND">
               </form>

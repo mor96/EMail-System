@@ -1,18 +1,23 @@
-// This code is based on the code from class examples in CSC302,
-//      but has been modified to conform to this project.
+var questions = [];
 var username, userURI;
-//This code taken from class example and been modifeid 
+
 $(document).ready(function(){
     //populateEmails()
 
-    
+    renderView();
 
     // Add listeners to the buttons.
    
     $(document).on('click', '#signout', signout);
+    // $(document).on('click', '.remove-question', removeQuestion);
+    // $('.remove-question').click(removeQuestion);
 
     $(document).on('click', '#starBtn', starEmail);
     $(document).on('click', '#dumpBtn', dumpEmail);
+
+    // $(document).on('click', '#save-quiz', saveQuiz);
+    // $(document).on('click', '#reset-quiz', function(){populateQuiz(questions)});
+    // $(document).on('click', '#check-quiz', checkQuiz);
 
     $(window).on('hashchange', renderView);
 
@@ -25,8 +30,11 @@ $(document).ready(function(){
     //renderView();
 });
 
-
-
+/**
+ * Determines which panel to show: the quiz or the admin panel. If the 
+ * URI's hash is '#admin', the admin panel is displayed, otherwise the
+ * quiz view is shown.
+ */
  function renderView(){
     let method = '';
     var hash = window.location.hash.match(/^#?([^?]*)/)[1];
@@ -45,11 +53,12 @@ $(document).ready(function(){
         console.log("mor ve ronaldo");
         method = 'starred';
         populateEmails(method);
-    } 
+    } //else {//else {
+    //     $('#home-panel').removeClass('hidden');
+    // }
+
     
 }
-
-
 
 /**
  * Load the user's information from localStorage.
@@ -66,6 +75,14 @@ function loadUserOrBoot(){
 
 function populateEmails(method){
 
+    var $who;
+
+    if(method == 'senderId'){
+        $who = "To";
+    }
+    else 
+    $who = 'from';
+
     console.log(method);
 
     var $method = method;
@@ -74,7 +91,7 @@ function populateEmails(method){
         data: {'action': 'getEmails',
              'method': $method,
             },
-        method: 'get',
+        method: 'post',
         success: function(data){
             console.log(data);
             var $mailbox = $('#mailbox')
@@ -82,11 +99,55 @@ function populateEmails(method){
             // $('#score').html('');
 
                 for(var i = 0; i < data['data'].length; i++){
-                    $mailbox.append(`<dt id="${data['data'][i]['messageId']}"> From:   ${data['data'][i]['senderId']}  -  ${data['data'][i]['message']}        <span class="btn">${data['data'][i]['sentAt']}<button id="starBtn" class="${data['data'][i]['starred']}"><i class="fa fa-star"></i></button>
-                    <button id="dumpBtn"><i class="fa fa-trash"></i></button></span></dt>`);
+                    if(data['data'][i]['starred'] > 0){
+                        var $starClass = "isStar";               
+                    }
+                    else 
+                    $starClass = "notStar";     
 
-                   
+                    $mailbox.append(`<details id="${data['data'][i]['messageId']}"> <summary>${$who}:   ${data['data'][i]['senderId']}  -  ${data['data'][i]['subject']}        <span class="btn">${data['data'][i]['sentAt']}<button id="starBtn" class=${$starClass}><i class="fa fa-star"></i></button>
+                    <button id="dumpBtn"><i class="fa fa-trash"></i></button></span></summary>${data['data'][i]['message']}</details>`);   
+                    
                 }
+           
+            // Pretty print the data.
+        },
+        error: function(jqXHR, status, error){
+            
+        }, 
+
+    });
+}
+
+/**
+ * Populates the quiz admin table with the given questions.
+ * 
+ * @param questions A list of question/answer pairs (each item is an object
+ *                  with the fields 'question' and 'answer').
+ */
+
+/**
+ * Adds a new row to the quiz admin question editor table.
+
+/**
+ * Removes a new row to the quiz admin question editor table. It is assumed that
+ * this is called with the context (this) of the specific "remove" button that
+ * was clicked.
+ */
+
+
+function getEmails(){
+    $.ajax({
+        url: 'mail-api.php',
+        data: data,
+        method: 'post',
+        success: function(data){
+            console.log("hello");
+            if(data["success"] === true){
+                window.location.assign("index.html")
+                localStorage.setItem('username', data['username']);
+               //window.location.href = 'index.html';
+            }
            
             // Pretty print the data.
         },
@@ -95,41 +156,15 @@ function populateEmails(method){
         }, 
 
     });
-}
-
-
-
-
-// function getEmails(){
-//     $.ajax({
-//         url: 'mail-api.php',
-//         data: data,
-//         method: 'post',
-//         success: function(data){
-//             console.log("hello");
-//             if(data["success"] === true){
-//                 window.location.assign("index.html")
-//                 //localStorage.setItem('username', data['username']);
-//                //window.location.href = 'index.html';
-//             }
-           
-//             // Pretty print the data.
-//         },
-//         error: function(jqXHR, status, error){
-//             console.log(data);
-//         }, 
-
-//     });
     
-// }
-
+}
 
 function dumpEmail(){
 
     // var x = document.getElementById("myLI").parentElement.nodeName;
     //         document.getElementById("demo").innerHTML = x;
 
-    var x = $(this).parents('dt').attr('id');
+    var x = $(this).parents('details').attr('id');
     var isStar = $(this).attr('id');
 
     $.ajax({
@@ -141,7 +176,7 @@ function dumpEmail(){
         success: function(data){
             
             if(data["success"] === true){
-                console.log(x);
+                
             }
            
         },
@@ -155,13 +190,11 @@ function dumpEmail(){
 
 }
 
-
-
 function starEmail(){
     // var x = document.getElementById("myLI").parentElement.nodeName;
     //         document.getElementById("demo").innerHTML = x;
 
-    var x = $(this).parents('dt').attr('id');
+    var x = $(this).parents('details').attr('id');
     var isStar = $(this).attr('id');
 
     $.ajax({
@@ -187,8 +220,6 @@ function starEmail(){
 
     console.log(x);
 }
-
-
 
 function signout(){
     $.ajax({
