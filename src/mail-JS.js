@@ -2,22 +2,17 @@ var questions = [];
 var username, userURI;
 
 $(document).ready(function(){
-    //populateEmails()
+    populateEmails()
 
     renderView();
 
-    // Add listeners to the buttons.
+    
    
     $(document).on('click', '#signout', signout);
-    // $(document).on('click', '.remove-question', removeQuestion);
-    // $('.remove-question').click(removeQuestion);
+   
 
     $(document).on('click', '#starBtn', starEmail);
     $(document).on('click', '#dumpBtn', dumpEmail);
-
-    // $(document).on('click', '#save-quiz', saveQuiz);
-    // $(document).on('click', '#reset-quiz', function(){populateQuiz(questions)});
-    // $(document).on('click', '#check-quiz', checkQuiz);
 
     $(window).on('hashchange', renderView);
 
@@ -30,11 +25,7 @@ $(document).ready(function(){
     //renderView();
 });
 
-/**
- * Determines which panel to show: the quiz or the admin panel. If the 
- * URI's hash is '#admin', the admin panel is displayed, otherwise the
- * quiz view is shown.
- */
+
  function renderView(){
     let method = '';
     var hash = window.location.hash.match(/^#?([^?]*)/)[1];
@@ -53,9 +44,7 @@ $(document).ready(function(){
         console.log("mor ve ronaldo");
         method = 'starred';
         populateEmails(method);
-    } //else {//else {
-    //     $('#home-panel').removeClass('hidden');
-    // }
+    } 
 
     
 }
@@ -118,22 +107,6 @@ function populateEmails(method){
 
     });
 }
-
-/**
- * Populates the quiz admin table with the given questions.
- * 
- * @param questions A list of question/answer pairs (each item is an object
- *                  with the fields 'question' and 'answer').
- */
-
-/**
- * Adds a new row to the quiz admin question editor table.
-
-/**
- * Removes a new row to the quiz admin question editor table. It is assumed that
- * this is called with the context (this) of the specific "remove" button that
- * was clicked.
- */
 
 
 function getEmails(){
