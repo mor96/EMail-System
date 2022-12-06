@@ -10,26 +10,38 @@
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function validateForm() {
+    var fname = document.forms["signupForm"]["fname"].value;
+    var lname = document.forms["signupForm"]["lname"].value;
+    var username = document.forms["signupForm"]["username"].value;
+    var password = document.forms["signupForm"]["password"].value;
+    
+    if (fname == "") {
+      alert("Name must be filled out");
+      return false;
+    }
+    else if (lname == "") {
+        alert("Name must be filled out");
+        return false;
+      }
+     else  if (username == "") {
+        alert("username must be filled out");
+        return false;
+      }
+      else if (password == "") {
+        alert("password must be filled out");
+        return false;
+      }
+  }
+    </script>
 
     <script>
         $(document).ready(function(){
             $(document).on('submit', '#signup-form', function(event){
                 var data = $(this).serialize();
-                var serverData = {'fname': data['fname'],
-                        'lname': data['lname'],
-                        'mailaddr': data['mailaddr'],
-                        'password': data['password'],
-                    };
 
-                // if(data['password'] !== data['password2']){
-                //     // Do something about it.
-                // }
 
-                // $.ajax('/users', {
-                //     method: 'POST',
-                //     data: data,
-
-                // })
                 $.ajax({
                     url: 'mail-api.php',
                     data: data,
@@ -64,7 +76,7 @@
 
 <div class="wrapper">
     <div class="signup">
-    <form id="signup-form"> 
+    <form name="signupForm" id="signup-form"> 
         <input type="hidden" name="action" value="signup">
         First Name: <input type="text" name="fname"><br><br>  
         Last Name:  <input type="text" name="lname"><br><br>

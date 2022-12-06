@@ -2,7 +2,7 @@ var questions = [];
 var username, userURI;
 
 $(document).ready(function(){
-    populateEmails()
+
 
     renderView();
 
@@ -26,24 +26,26 @@ $(document).ready(function(){
 });
 
 
+// update the list of emailes 
  function renderView(){
-    let method = '';
+    let method = 'author';
+    let to = '';
     var hash = window.location.hash.match(/^#?([^?]*)/)[1];
     console.log(hash);
     // $('.panel').addClass('hidden');
 
     if(hash === 'sent'){
+        to = 'recipient'
          method = 'senderId';
-         console.log("mor ve messi");
-        populateEmails(method);
+        populateEmails(method, to);
     } else if(hash == 'inbox') {
-        console.log("mor ve ronaldo");
+        to = 'author'
         method = 'receiverId';
-        populateEmails(method);
+        populateEmails(method, to);
     } else if(hash == 'starred') {
-        console.log("mor ve ronaldo");
+        to = 'author'
         method = 'starred';
-        populateEmails(method);
+        populateEmails(method, to);
     } 
 
     
@@ -62,7 +64,11 @@ function loadUserOrBoot(){
 }
 
 
-function populateEmails(method){
+// Getting list of all emails
+// method ==type of list(sent . recieved, satrred)
+// name = name if its the seder or reciever
+// who = if the list is from who or to who
+function populateEmails(method, name){
 
     var $who;
 
@@ -70,11 +76,13 @@ function populateEmails(method){
         $who = "To";
     }
     else 
-    $who = 'from';
+    $who = 'From';
+
 
     console.log(method);
 
     var $method = method;
+    var $name = name;
     $.ajax({
         url: 'mail-api.php',
         data: {'action': 'getEmails',
@@ -87,19 +95,22 @@ function populateEmails(method){
                 $mailbox.html('');
             // $('#score').html('');
 
+            
+
                 for(var i = 0; i < data['data'].length; i++){
                     if(data['data'][i]['starred'] > 0){
                         var $starClass = "isStar";               
                     }
                     else 
-                    $starClass = "notStar";     
+                    $starClass = "notStar";
+                
 
-                    $mailbox.append(`<details id="${data['data'][i]['messageId']}"> <summary>${$who}:   ${data['data'][i]['senderId']}  -  ${data['data'][i]['subject']}        <span class="btn">${data['data'][i]['sentAt']}<button id="starBtn" class=${$starClass}><i class="fa fa-star"></i></button>
-                    <button id="dumpBtn"><i class="fa fa-trash"></i></button></span></summary>${data['data'][i]['message']}</details>`);   
-                    
+                    if(data['data'][i]['deleted'] != data['user']['userId']){
+                        $mailbox.append(`<details id="${data['data'][i]['messageId']}"> <summary>${$who}:   ${data['data'][i][$name]}  -  ${data['data'][i]['subject']}        <span class="btn">${data['data'][i]['sentAt']}<button id="starBtn" class=${$starClass}><i class="fa fa-star"></i></button>
+                        <button id="dumpBtn"><i class="fa fa-trash"></i></button></span></summary>${data['data'][i]['message']}</details>`);   
+                    }
                 }
            
-            // Pretty print the data.
         },
         error: function(jqXHR, status, error){
             
@@ -109,33 +120,11 @@ function populateEmails(method){
 }
 
 
-function getEmails(){
-    $.ajax({
-        url: 'mail-api.php',
-        data: data,
-        method: 'post',
-        success: function(data){
-            console.log("hello");
-            if(data["success"] === true){
-                window.location.assign("index.html")
-                localStorage.setItem('username', data['username']);
-               //window.location.href = 'index.html';
-            }
-           
-            // Pretty print the data.
-        },
-        error: function(jqXHR, status, error){
-            console.log(data);
-        }, 
 
-    });
-    
-}
+// delete an email
+// reuquire email id
 
 function dumpEmail(){
-
-    // var x = document.getElementById("myLI").parentElement.nodeName;
-    //         document.getElementById("demo").innerHTML = x;
 
     var x = $(this).parents('details').attr('id');
     var isStar = $(this).attr('id');
@@ -162,6 +151,10 @@ function dumpEmail(){
     renderView();
 
 }
+
+
+// add email to favorite
+// require email Id
 
 function starEmail(){
     // var x = document.getElementById("myLI").parentElement.nodeName;

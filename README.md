@@ -19,6 +19,7 @@ mail.db - database file that store all the users and mails.
 | ------------- | ------------- | ---------- |   -------------------- | 
 | signup       |     POST          |name, email address, password |   sucsess (true/false) |
 | signin       |        POST       |  email address, password |   sucsess (true/false) |
+| signout      |        POST       |  |   sucsess (true/false) |
 | send-email    | POST          | recipient address, message |   sucsess (true/false) |
 | dumpEmail   | DELETE        | email id        |   sucsess (true/false)  |
 | starEmail    | PATCH         |  email id         |   sucsess (true/false) |
@@ -46,13 +47,9 @@ Send emails - 100%.
 Recieve emails - 100%.  
 Delete emails - 50% (Emails get deleted for both sender and receiver - need to fix).  
 Star emails - 100%.  
-
-## To Do
-Handle errors. 
-Style.  
 Add title to message. (100%) 
-Inbox will show the message title and open the full message after user press.(100$) 
-See the name of the message author insted of his ID. 
+Inbox will show the message title and open the full message after user press.(100%) 
+See the name of the message author insted of his ID. (100%) 
 
 
 Visit https://digdug.cs.endicott.edu/~mohana/csc302fa22-ohana-project/src/signin.html

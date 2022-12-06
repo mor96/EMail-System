@@ -27,9 +27,9 @@
                         'password': data['password'],
                     };
 
-                // if(data['password'] !== data['password2']){
-                //     // Do something about it.
-                // }
+                if(data['username'] !== localStorage.getItem('username')){
+                    
+                
 
                 // $.ajax('/users', {
                 //     method: 'POST',
@@ -61,7 +61,9 @@
 
                 });
                 event.preventDefault();
-               
+            }
+            else 
+            alert("Can't email YOURSELF!");
                 
             });
 
@@ -73,14 +75,14 @@
 
     <header class="header">
 
-        Email
+        TMAIL
     </header>
     
    
    
     <div class="sidenav">
     
-        <p style="color: rgb(17, 8, 5); padding-left: 10px;">Welcome, <span class="username"></span> !</p>
+        <p style="color: rgb(255, 255, 255); padding-left: 10px; font-size: large; font-weight: bold;">Welcome, <span class="username"></span> !</p>
    
         <nav id="sidenav" ><br>
             <div class="w3-bar-block">

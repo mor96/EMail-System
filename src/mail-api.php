@@ -33,7 +33,7 @@ $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 createTables();
 
 $supportedActions = [
-    'signup', 'signin', 'getTable', 'sendEmail','getEmails', 'starEmail','dumpEmail', 'signout'
+    'signup', 'signin', 'sendEmail','getEmails', 'starEmail','dumpEmail', 'signout'
 ];
 
 //This code taken from class example and been modifeid 
@@ -69,8 +69,11 @@ function createTables(){
             'messageId integer primary key autoincrement, '. 
             'senderId integer, '. 
             'receiverId integer, '. 
+            'author text, '. 
+            'recipient text, '. 
             'subject text, '. 
-            'message text, '. 
+            'message text, '.
+            'deleted integer, '.  
             'starred integer, '. 
             'sentAt datetime default(datetime()), '. 
             'foreign key (senderId) references Users(id), '. 
@@ -146,11 +149,6 @@ function authorize($data){
         ]);
 
 
-        // $statement = $dbh->prepare('select authorId from Quizzes '. 
-        // 'where id = :quizId');
-        // $statement->execute([
-        //     ':quizId' => $data['quizId']
-        // ]);
         $user = $statement->fetch(PDO::FETCH_ASSOC);
 
         if($user['authorId'] ==  $_SESSION['user-id']){
@@ -249,7 +247,7 @@ function sendEmail($data){
 
     try {
 
-        $statement = $dbh->prepare('select userId from Users '. 
+        $statement = $dbh->prepare('select * from Users '. 
         'where username = :username');
          $statement->execute([
         ':username' => $data['username']
@@ -257,12 +255,22 @@ function sendEmail($data){
 
         $user = $statement->fetch(PDO::FETCH_ASSOC);
 
+        $statement = $dbh->prepare('select * from Users '. 
+        'where userId = :userId');
+         $statement->execute([
+        ':userId' => $_SESSION['user-id']
+         ]);
+
+        $user2 = $statement->fetch(PDO::FETCH_ASSOC);
+
 
         $statement = $dbh->prepare('insert into mails'. 
-            '(senderId, receiverId, subject, message) values (:senderId, :receiverId, :subject, :message)');
+            '(senderId, receiverId, author, recipient, subject, message) values (:senderId, :receiverId, :author, :recipient, :subject, :message)');
         $statement->execute([
             ':senderId' => $_SESSION['user-id'], 
             ':receiverId' => $user['userId'],
+            ':author' => $user2['fname'],
+            ':recipient' => $user['fname'],
             ':subject' => $data['subject'],
             ':message' => $data['message']
         ]);
@@ -300,28 +308,8 @@ function getUserByUsername($username){
     }
 }
 
-/**
- * Outputs all the values of a database table. 
- * 
- * @param table The name of the table to display.
- */
-function getTable($table){
-    global $dbh;
-    try {
-        $statement = $dbh->prepare("select * from Users");
-        $statement->execute();
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-        die(json_encode(['success' => true, 'data' => $rows]));
 
-    } catch(PDOException $e){
-        http_response_code(400);
-        die(json_encode([
-            'success' => false, 
-            'error' => "There was an error fetching rows from table $table: $e"
-        ]));
-    }
-}
-
+// getting list of all messages from database
 function getEmails($data){
     global $dbh;
     $method = $data['method']; 
@@ -341,11 +329,11 @@ function getEmails($data){
         }
 
 
-        $statement = $dbh->prepare("select * from Users");
-            $statement->execute();
-            $users = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $statement = $dbh->prepare("select userId from Users where userId = :userId");
+            $statement->execute([':userId' =>  $_SESSION['user-id']]);
+            $user = $statement->fetch(PDO::FETCH_ASSOC);
 
-        die(json_encode(['success' => true, 'data' => $emails, 'user' => $users ]));
+        die(json_encode(['success' => true, 'data' => $emails, 'user' => $user ]));
 
     } catch(PDOException $e){
         http_response_code(400);
@@ -411,12 +399,32 @@ function starEmail($data){
     }
 }
 
+
+// deleting en email
+// deault deleted cell value is null
+// setting the deleting cell to the deleter user ID
+// if user from other also deleteing the email and deleted 
+//call greater then message get deleted completly
+
 function dumpEmail($data){
     global $dbh;
     $id = $data['emailId']; 
     try {
-        $statement = $dbh->prepare("delete from mails where messageId = :messageId");
+
+        $statement = $dbh->prepare("select * from mails where messageId = :messageId");
         $statement->execute([':messageId' =>  $data['emailId']]);
+        $row = $statement->fetch(PDO::FETCH_ASSOC);
+
+        if($row['deleted'] > 0){
+            $statement = $dbh->prepare("delete from mails where messageId = :messageId");
+            $statement->execute([':messageId' =>  $data['emailId']]);
+        }
+        else {
+            $statement = $dbh->prepare("update mails set deleted = :deleted where messageId = :messageId");
+            $statement->execute([':messageId' =>  $data['emailId'],
+                        ':deleted' =>   $_SESSION['user-id']]);
+        }
+
         die(json_encode(['success' => true]));
 
     } catch(PDOException $e){
