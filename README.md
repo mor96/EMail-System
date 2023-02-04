@@ -1,4 +1,4 @@
-# csc302fa22-ohana-project
+# EMAIL System
 
 ## Into
 
